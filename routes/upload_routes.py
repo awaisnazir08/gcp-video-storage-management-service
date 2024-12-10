@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from services.user_service import UserService
-from ..utils.alerts import send_storage_alert
+from helper_utils.alerts import send_storage_alert
 
 def upload_blueprint(gcs_service, mongo_service, user_service_url):
     upload_bp = Blueprint('upload', __name__)
@@ -14,6 +14,7 @@ def upload_blueprint(gcs_service, mongo_service, user_service_url):
 
         username = user['username']
         user_storage = mongo_service.find_user_storage(username)
+        print(user_storage)
         if not user_storage:
             user_storage = mongo_service.initialize_user_storage(username, 50 * 1024 * 1024)  # 50MB
 
@@ -25,7 +26,7 @@ def upload_blueprint(gcs_service, mongo_service, user_service_url):
         file.seek(0)
 
         if user_storage['used_storage'] + file_size > user_storage['total_storage']:
-            return jsonify({"error": "Upload would exceed storage limit"}), 403
+            return jsonify({"error": "Exceeds storage limit, cannot upload video..!!"}), 403
 
         filename = f"{username}/{file.filename}"
         gcs_service.upload_file(filename, file)

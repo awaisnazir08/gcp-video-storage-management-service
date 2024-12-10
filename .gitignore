@@ -1,1 +1,7 @@
 /.env
+__pycache__/config.cpython-311.pyc
+*/__pycache__/
+__pycache__/*
+*/__pycache__/*
+
+first-scout-444113-h2-72968e1f4f18.json
