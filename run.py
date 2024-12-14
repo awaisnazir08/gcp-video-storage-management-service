@@ -18,4 +18,4 @@ app.register_blueprint(status_blueprint(mongo_service, USER_SERVICE_URL))
 app.register_blueprint(delete_blueprint(gcs_service, mongo_service, USER_SERVICE_URL))
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000, debug = True)

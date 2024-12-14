@@ -9,14 +9,16 @@ def upload_blueprint(gcs_service, mongo_service, user_service_url):
     def upload_video():
         token = request.headers.get('Authorization', '').split(' ')[-1]
         user = UserService.validate_token(token, user_service_url)
+        print(f"user: {user}")
         if not user:
             return jsonify({"error": "Unauthorized"}), 401
 
+        email = user['email']
         username = user['username']
-        user_storage = mongo_service.find_user_storage(username)
-        print(user_storage)
+        user_storage = mongo_service.find_user_storage(email)
+        # print(user_storage)
         if not user_storage:
-            user_storage = mongo_service.initialize_user_storage(username, 50 * 1024 * 1024)  # 50MB
+            user_storage = mongo_service.initialize_user_storage(email, 50 * 1024 * 1024)  # 50MB
 
         if 'file' not in request.files:
             return jsonify({"error": "No file part"}), 400
@@ -31,7 +33,7 @@ def upload_blueprint(gcs_service, mongo_service, user_service_url):
         filename = f"{username}/{file.filename}"
         gcs_service.upload_file(filename, file)
 
-        mongo_service.update_storage(username, {
+        mongo_service.update_storage(email, {
             '$inc': {'used_storage': file_size},
             '$push': {'files': {'filename': filename, 'size': file_size}}
         })
