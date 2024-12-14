@@ -16,6 +16,7 @@ def delete_blueprint(gcs_service, mongo_service, user_service_url):
             return jsonify({"error": "No filename provided"}), 400
 
         username = user['username']
+        email = user['email']
         full_filename = f"{username}/{filename}"
 
         try:
@@ -23,11 +24,11 @@ def delete_blueprint(gcs_service, mongo_service, user_service_url):
             gcs_service.delete_file(full_filename)
 
             # Find and update user's storage
-            user_storage = mongo_service.find_user_storage(username)
+            user_storage = mongo_service.find_user_storage(email)
             file_to_remove = next((f for f in user_storage['files'] if f['filename'] == full_filename), None)
 
             if file_to_remove:
-                mongo_service.update_storage(username, {
+                mongo_service.update_storage(email, {
                     '$inc': {'used_storage': -file_to_remove['size']},
                     '$pull': {'files': {'filename': full_filename}}
                 })

@@ -11,8 +11,8 @@ def status_blueprint(mongo_service, user_service_url):
         if not user:
             return jsonify({"error": "Unauthorized"}), 401
 
-        username = user['username']
-        user_storage = mongo_service.find_user_storage(username)
+        email = user['email']
+        user_storage = mongo_service.find_user_storage(email)
         
         if not user_storage:
             return jsonify({
