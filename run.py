@@ -5,8 +5,12 @@ from services.mongo_service import MongoService
 from routes.upload_routes import upload_blueprint
 from routes.status_routes import status_blueprint
 from routes.delete_routes import delete_blueprint
+from flask_cors import CORS  # Import CORS
 
 app = Flask(__name__)
+
+# Enable CORS for all routes
+CORS(app)
 
 # Service initializations
 gcs_service = GCSService(GCS_BUCKET)
